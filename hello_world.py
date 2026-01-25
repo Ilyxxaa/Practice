@@ -1,0 +1,5 @@
+print("Hello PP1!")
+print("My name is Ilya.")
+print("Im 18 years old")
+print("Bober")
+print("Cat is a cat")

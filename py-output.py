@@ -1,0 +1,5 @@
+print("Hello everyone!")
+print("This looks great.", end=" ")
+print("Can i try it?")
+print("Im", 18)
+print(3+4, "+",3*1, "=", 10 )
