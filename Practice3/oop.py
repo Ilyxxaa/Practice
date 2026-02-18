@@ -100,5 +100,50 @@ class Person1:
 p1 = Person1("Ilya", 18)
 p1.welcome()
 
-#----------------------------------------------------------------------------
-# Class properties
+# Methods 
+class Calculator:
+   def __init__(self, x, y):
+      self.x = x
+      self.y = y
+
+   def summ(self, a, b): # this method can accept parameters just like regular finctions
+      return a * b
+   
+   def mult(self):
+      return f"multiplication of {self.x} and {self.y} = {self.x * self.y}"
+      #modify object properties using self
+
+   def upscaler(self):
+      self.x += 1
+      self.y += 1
+      return self.x , self.y
+   #Methods can modify the properties of an object
+   
+
+calc = Calculator(4,5) #x, y = 4, 5
+print(calc.summ(2,3)) #a , b = 2, 3
+print(calc.mult())
+print(calc.upscaler())
+
+class Person:
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
+
+  def greet(self):
+     return f"hello {self.name}"
+
+  def __str__(self):
+    return f"{self.name} ({self.age})"
+  #The __str__() method is a special method 
+  #that controls what is returned when the object is printed
+
+p1 = Person("Ilya", 18)
+print(p1) # no need to call the method __str__()
+print(p1.greet)
+
+# you can delete methods and properties by using del
+del Person.greet
+del p1.age
+"print(p1.greet) - cause an error"
+" - cause an error because age no more atribute of p1"
