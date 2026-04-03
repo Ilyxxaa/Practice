@@ -6,11 +6,40 @@ def add_contact(name, phone):
     cur = conn.cursor()
 
     cur.execute(
-        "INSERT INTO contacts (name, phone) VALUES (%s, %s)",
-        (name, phone)
+        "CALL upsert_contacts(%s, %s)", (name, phone)
     )
 
     conn.commit()
+    cur.close()
+    conn.close()
+
+def insert_many_contacts():
+    conn = connect()
+    cur = conn.cursor()
+
+    names = input("Enter names separated by comma: ").split(",")
+    phones = input("Enter phones separated by comma: ").split(",")
+
+    cur.execute(
+        "CALL insert_many(%s, %s)",
+        (names, phones)
+    )
+    conn.commit()
+
+    cur.execute(
+        "SELECT * FROM invalid_contacts"
+    )
+    invalid_rows = cur.fetchall()
+    if invalid_rows:
+        print("\nInvalid contacts found:")
+        for name, phone in invalid_rows:
+            print(f"Name: {name}, Phone: {phone}")
+        
+        cur.execute("TRUNCATE TABLE invalid_contacts")
+        conn.commit()
+    else:
+        print("All contacts inserted successfully!")
+
     cur.close()
     conn.close()
 
@@ -32,8 +61,7 @@ def search_contacts(keyword):
     cur = conn.cursor()
 
     cur.execute(
-        "SELECT * FROM contacts WHERE name ILIKE %s OR phone LIKE %s",
-        (f"%{keyword}%", f"{keyword}%") #finding all similarities with our prefix %""% - anywhere inside, ""% starting with our prefix
+        "SELECT * FROM search_contacts(%s)", (keyword,)
     )
 
     print(cur.fetchall())
@@ -41,40 +69,35 @@ def search_contacts(keyword):
     cur.close()
     conn.close()
 
-def update_contact(name, new_name=None, new_phone=None):
-    conn = connect()
-    cur = conn.cursor()
-
-    if new_name:
-        cur.execute(
-            "UPDATE contacts SET name=%s WHERE name=%s",
-            (new_name, name)
-        )
-
-    if new_phone:
-        cur.execute(
-            "UPDATE contacts SET phone=%s WHERE name=%s",
-            (new_phone, name)
-        )
-
-    conn.commit()
-    cur.close()
-    conn.close()
 
 def delete_contact(value):
     conn = connect()
     cur = conn.cursor()
 
-    cur.execute(
-        "DELETE FROM contacts WHERE name=%s OR phone=%s",
-        (value, value)
-    )
-    if value == "ALL" or "All" or "all":
+    if value.lower() == "all":
         cur.execute(
             "TRUNCATE TABLE contacts RESTART IDENTITY"
         )
-
+    else:
+        cur.execute(
+        "CALL delete_contact(%s)",
+        (value,)
+    )
     conn.commit()
+    cur.close()
+    conn.close()
+
+def get_paginated(limit, offset):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT * FROM get_contacts_paginated(%s, %s)",
+        (limit, offset)
+    )
+
+    print(cur.fetchall())
+
     cur.close()
     conn.close()
 
@@ -103,12 +126,13 @@ def import_csv():
 
 def menu():
     while True:
-        print("\n1 Add")
+        print("\n1 Add/Update")
         print("2 Show")
         print("3 Search")
-        print("4 Update")
+        print("4 Paginate")
         print("5 Delete")
         print("6 Import CSV")
+        print("7 Bulk insert")
         print("0 Exit")
 
         choice = input("Choose: ")
@@ -123,18 +147,16 @@ def menu():
             search_contacts(input("Search: "))
 
         elif choice == "4":
-            choice1 = input("Name or Phone: ")
-            if choice1 == "Name":
-                update_contact(input("Old name: "), input("New name: "))
-                
-            elif choice1 == "Phone":
-                update_contact(input("Name: "), None,  input("New phone: "))
+            get_paginated(input("How many records: "), input("From which position: "))
 
         elif choice == "5":
             delete_contact(input("Name or phone or all: "))
 
         elif choice == "6":
             import_csv()
+
+        elif choice == "7":
+            insert_many_contacts()
 
         elif choice == "0":
             break
