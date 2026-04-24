@@ -3,15 +3,15 @@ import time
 
 pygame.init()
 
-screen = pygame.display.set_mode((700, 700))
+screen = pygame.display.set_mode((750, 700))
 bg = pygame.image.load("mickey.jpg")
-bg = pygame.transform.scale(bg, (700, 700))
+bg = pygame.transform.scale(bg, (750, 700))
 clock = pygame.time.Clock()
 
 left_hand = pygame.image.load("1.png").convert_alpha()
 right_hand = pygame.image.load("2.png").convert_alpha()
 
-center = (350,350)
+center = (375,350)
 
 running = True
 while running:
@@ -28,6 +28,7 @@ while running:
 
     sec_angle = -seconds * 6
     min_angle = -minutes * 6
+    
 
     sec_hand = pygame.transform.rotate(left_hand, sec_angle)
     min_hand = pygame.transform.rotate(right_hand, min_angle)  
