@@ -150,6 +150,10 @@ while True:
         # Create a new coin every 1.5 seconds
         if event.type == ADD_COIN:
             new_coin = Coin()
+
+        # If coin spawns on the player car, create a new position
+            while new_coin.rect.colliderect(E1.rect):
+                new_coin.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
             coins.add(new_coin)
             all_sprites.add(new_coin)
 

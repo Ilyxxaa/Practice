@@ -112,7 +112,7 @@ while running:
 
                     pygame.draw.rect(canvas, current_color, rect, radius)
 
-                elif tool == "circle":
+                elif tool == "circle":  
                     x1, y1 = start_pos
                     x2, y2 = end_pos
 
